@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+model Account {
+  id             Int      @id @default(autoincrement())
+  name           String
+  appId          String
+  identitySecret String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  users UserAccount[]
+}
+
+model User {
+  id                  Int      @id @default(autoincrement())
+  uniqueId            String
+  name                String
+  email               String   @unique
+  password            String
+  resetPasswordToken  String
+  resetPasswordSentAt DateTime
+  confirmationToken   String
+  confirmationSentAt  DateTime
+  confirmedAt         DateTime
+  status              String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  accounts UserAccount[]
+  userToken UserToken?
+}
+
+model UserAccount {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  accountId Int?
+  account   Account? @relation(fields: [accountId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model UserToken {
+  id        Int      @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  token String
+  ip String
+  os String
+  browser String
+  agent String
+  lastAccessedOn DateTime
+  status String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
