@@ -13,9 +13,9 @@ generator client {
 
 model Account {
   id             Int      @id @default(autoincrement())
-  name           String
-  appId          String
-  identitySecret String
+  name           String @unique
+  appId          String @unique
+  identitySecret String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -24,16 +24,16 @@ model Account {
 
 model User {
   id                  Int      @id @default(autoincrement())
-  uniqueId            String
+  uniqueId            String?
   name                String
   email               String   @unique
   password            String
-  resetPasswordToken  String
-  resetPasswordSentAt DateTime
-  confirmationToken   String
-  confirmationSentAt  DateTime
-  confirmedAt         DateTime
-  status              String
+  resetPasswordToken  String?
+  resetPasswordSentAt DateTime?
+  confirmationToken   String @default(uuid())
+  confirmationSentAt  DateTime @default(now())
+  confirmedAt         DateTime? 
+  status              UserStatus @default(INACTIVE)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -43,8 +43,8 @@ model User {
 
 model UserAccount {
   id        Int      @id @default(autoincrement())
-  userId    Int?
-  accountId Int?
+  userId    Int
+  accountId Int
   account   Account? @relation(fields: [accountId], references: [id])
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
@@ -67,3 +67,8 @@ model UserToken {
   updatedAt DateTime @updatedAt
 }
 
+enum UserStatus {
+  INACTIVE
+  ACTIVE
+  BLOCKED
+}

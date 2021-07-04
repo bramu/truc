@@ -1,25 +1,60 @@
-import { Body, Controller, HttpStatus, Post, Res, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, Res, ValidationPipe } from '@nestjs/common';
 import { Response } from 'express';
-import { ChangePasswordDto, SignUpDto } from './users.dto';
+import { ChangePasswordDto, ResetPasswordDto, SignInDto, SignUpDto } from './users.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
+  ) {}
 
   @Post('signin')
-  signIn(): void {}
+  async signIn(
+    @Body(new ValidationPipe()) signInDto: SignInDto,
+    @Res() res: Response,
+  ): Promise<any> {
+    return res.status(200).json({ dfds: 'dsfdsfds' });
+  }
 
   @Post('signup')
-  signUp(@Body(new ValidationPipe()) signupDto: SignUpDto, @Res() res: Response): void{
-    res.json({"dfds": "dsfdsfds"});
+  async signUp(
+    @Body(new ValidationPipe()) signupDto: SignUpDto,
+    @Res() res: Response,
+  ): Promise<any> {
+    // create the user first and then sign in
+    const ret = await this.userService.createUser(signupDto);
+    if (null == ret || null == ret.user) {
+      return res.status(400).json(ret);
+    }
+
+    // once the user creates successfully signin the user
+
+    return res.status(200).json({ dfds: 'dsfdsfds' });
   }
 
   @Post('change_password')
-  changePassword(
+  async changePassword(
     @Body(new ValidationPipe()) changePasswordDto: ChangePasswordDto,
-  ): void {}
+    @Res() res: Response,
+  ): Promise<any> {
+    return res.status(200).json({ dfds: 'dsfdsfds' });
+  }
 
   @Post('reset_password')
-  resetPassword(): void {}
+  async resetPassword(
+    @Body(new ValidationPipe()) resetPasswordDto: ResetPasswordDto,
+    @Res() res: Response,
+  ): Promise<any> {
+    return res.status(200).json({ dfds: 'dsfdsfds' });
+  }
+
+  // all the get requests should go here
+  @Post('reset_password')
+  async signOut(
+    @Body(new ValidationPipe()) sig: ResetPasswordDto,
+    @Res() res: Response,
+  ): Promise<any> {
+    return res.status(200).json({ dfds: 'dsfdsfds' });
+  }
 }
