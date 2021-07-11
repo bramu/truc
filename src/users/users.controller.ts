@@ -1,5 +1,13 @@
-import { Body, Controller, Post, Res, ValidationPipe } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  ValidationPipe,
+} from '@nestjs/common';
+import { Response, Request } from 'express';
 import {
   ChangePasswordDto,
   ResetPasswordDto,
@@ -17,7 +25,13 @@ export class UsersController {
     @Body(new ValidationPipe()) signInDto: SignInDto,
     @Res() res: Response,
   ): Promise<any> {
-    return res.status(200).json({ dfds: 'dsfdsfds' });
+    const user = await this.userService.signIn(signInDto);
+
+    if (!user.data) {
+      return res.status(200).json({ message: 'Invalid Data' });
+    }
+
+    return res.status(200).json({ ...user });
   }
 
   @Post('signup')
@@ -27,13 +41,24 @@ export class UsersController {
   ): Promise<any> {
     // create the user first and then sign in
     const ret = await this.userService.createUser(signupDto);
-    if (null == ret || null == ret.user) {
+    if (null == ret || null == ret.data) {
       return res.status(400).json(ret);
     }
 
     // once the user creates successfully signin the user
 
-    return res.status(200).json({ ...ret });
+    return res.status(200).json({ ...ret, message: 'SignUp Successfull' });
+  }
+
+  @Get('verify-account')
+  async verifyAccount(@Req() req: Request, @Res() res: Response): Promise<any> {
+    const { confToken } = req.query;
+
+    const accnt = await this.userService.verifyUser(confToken);
+
+    console.log(accnt);
+
+    return res.status(200).json({ dfds: 'dsfdsfds' });
   }
 
   @Post('change_password')

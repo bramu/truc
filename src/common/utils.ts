@@ -132,4 +132,8 @@ export class TruUtil {
     // Generate a v4 (random) id
     // return require('uuid').v4(); // -> '110ec58a-a0f2-4ac4-8393-c866d813b8d1'
   };
+  static uuidV1 = uuid.v1;
+  // static uuidV3 = uuid.v3;
+  static uuidV4 = uuid.v4;
+  // static uuidV5 = uuid.v5;
 }
