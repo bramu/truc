@@ -90,21 +90,21 @@ export class TruUtil {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require('randomstring').generate({
       length: 6,
-      charset: 'alphanumeric'
+      charset: 'alphanumeric',
     });
   };
   static getJwt = (data: any) => {
     return jwt.sign(
       {
-        data: data
+        data: data,
       },
       process.env.JWT_SECRET!,
-      { expiresIn: '30 days' }
+      { expiresIn: '30 days' },
     );
   };
   static letifyJwt = (
     token: string,
-    secret?: string
+    secret?: string,
   ): { success: boolean; data?: any; message?: string } => {
     if (!secret) secret = process.env.JWT_SECRET;
     try {

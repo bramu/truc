@@ -1,8 +1,10 @@
 import { User } from '.prisma/client';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../common/prisma.service';
 import { SignUpDto } from './users.dto';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { TruUtil } from '../common/utils';
 
 @Injectable()
 export class UsersService {
@@ -36,25 +38,40 @@ export class UsersService {
     }
 
     // create the user
-    const user = await this.prisma.user.create({
-      data: {
-        email: signupDto['email'],
-        password: signupDto['password'],
-        name: signupDto['name'],
-        uniqueId: uuidv4(),
-        accounts: {
-          create: {
-            account: {
-              create: {
-                name: signupDto['account'],
-                appId: uuidv4(),
+
+    try {
+      const user: any = await this.prisma.user.create({
+        data: {
+          email: signupDto['email'],
+          password: TruUtil.getHash(TruUtil.decode(signupDto['password'])),
+          name: signupDto['name'],
+          uniqueId: uuidv4(),
+          accounts: {
+            create: {
+              account: {
+                create: {
+                  name: signupDto['account'],
+                  appId: uuidv4(),
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return { user };
+      const token: string = TruUtil.getJwt({
+        name: user.name,
+        email: user.email,
+        id: user.id,
+        status: user.status,
+      });
+
+      //send email to confirm is pending
+
+      return { user, token };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Server Error', HttpStatus.BAD_REQUEST);
+    }
   }
 }
