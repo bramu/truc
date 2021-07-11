@@ -11,7 +11,7 @@ export class TeamsController {
 
   @Get('invite')
   invite(@Req() req: Request): string {
-    return "this is for testing - " + req.body.userId;
+    return 'this is for testing - ' + req.body.userId;
   }
 
   @Get('accept_invite')

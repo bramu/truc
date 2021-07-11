@@ -9,6 +9,6 @@ import { PrismaService } from '../common/prisma.service';
 @Module({
   imports: [PassportModule],
   providers: [UsersService, AuthService, LocalStrategy, PrismaService],
-  controllers: [UsersController]
+  controllers: [UsersController],
 })
 export class UsersModule {}

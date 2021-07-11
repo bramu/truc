@@ -1,13 +1,16 @@
 import { Body, Controller, Post, Res, ValidationPipe } from '@nestjs/common';
 import { Response } from 'express';
-import { ChangePasswordDto, ResetPasswordDto, SignInDto, SignUpDto } from './users.dto';
+import {
+  ChangePasswordDto,
+  ResetPasswordDto,
+  SignInDto,
+  SignUpDto,
+} from './users.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly userService: UsersService,
-  ) {}
+  constructor(private readonly userService: UsersService) {}
 
   @Post('signin')
   async signIn(

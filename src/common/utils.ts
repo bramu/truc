@@ -45,7 +45,8 @@ export class TruUtil {
       (Array.isArray(emails) && emails.length == 0)
     )
       return false;
-    const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    const emailRegexp =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     let flag = true;
     if (!Array.isArray(emails)) emails = [emails];
     for (const x of emails) {
@@ -124,7 +125,7 @@ export class TruUtil {
     if (val === null) return null;
     else return val.replace("'", "\\'");
   };
-  
+
   static generateSalt = () => {
     // Generate a v1 (time-based) id
     return uuid.v1(); // -> '6c84fb90-12c4-11e1-840d-7b25c5ee775a'

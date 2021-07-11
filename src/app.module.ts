@@ -8,9 +8,12 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [TeamsModule, UsersModule],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_PIPE,
-    useClass: ValidationPipe,
-  }],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+  ],
 })
 export class AppModule {}
