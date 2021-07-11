@@ -6,20 +6,23 @@ import {
   Req,
   Res,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import {
-  ChangePasswordDto,
-  ResetPasswordDto,
   SignInDto,
   SignUpDto,
+  ChangePasswordDto,
+  PwdResetLinkDto,
 } from './users.dto';
 import { UsersService } from './users.service';
+import { SimpleAuthGuard } from './simple-auth.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
+  // @UseGuards(SimpleAuthGuard)
   @Post('signin')
   async signIn(
     @Body(new ValidationPipe()) signInDto: SignInDto,
@@ -54,35 +57,68 @@ export class UsersController {
   async verifyAccount(@Req() req: Request, @Res() res: Response): Promise<any> {
     const { confToken } = req.query;
 
-    const accnt = await this.userService.verifyUser(confToken);
+    const result = await this.userService.verifyUser(confToken);
 
-    console.log(accnt);
+    if (!result.success) {
+      if (result.message === 'Invalid Link') {
+        return res.status(401).json({
+          ...result,
+        });
+      }
 
-    return res.status(200).json({ dfds: 'dsfdsfds' });
+      return res.status(400).json({
+        message: 'Bad Request',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Account Verified Successfully',
+    });
   }
 
-  @Post('change_password')
+  @Post('forgot-password')
+  async forgotPassword(
+    @Body(new ValidationPipe()) PwdResetLinkDto: PwdResetLinkDto,
+    @Res() res: Response,
+  ): Promise<any> {
+    //TODO send email link for forgot password
+
+    const result = await this.userService.getPwdLink(PwdResetLinkDto);
+
+    return res.status(200).json({ ...result });
+  }
+
+  @Post('change-password')
   async changePassword(
-    @Body(new ValidationPipe()) changePasswordDto: ChangePasswordDto,
+    @Body(new ValidationPipe()) ChangePasswordDto: ChangePasswordDto,
     @Res() res: Response,
   ): Promise<any> {
-    return res.status(200).json({ dfds: 'dsfdsfds' });
+    //TODO send email link for forgot password
+
+    const result = await this.userService.changePassword(ChangePasswordDto);
+
+    return res.status(200).json({ ...result });
   }
 
-  @Post('reset_password')
+  @UseGuards(SimpleAuthGuard)
+  @Post('reset-password')
   async resetPassword(
-    @Body(new ValidationPipe()) resetPasswordDto: ResetPasswordDto,
+    @Req() req: Request,
+    // @Body(new ValidationPipe()) ResetPasswordDto: ResetPasswordDto,
     @Res() res: Response,
   ): Promise<any> {
-    return res.status(200).json({ dfds: 'dsfdsfds' });
+    const result = await this.userService.resetPassword(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({ ...result });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'password reset successfully',
+    });
   }
 
   // all the get requests should go here
-  @Post('reset_password')
-  async signOut(
-    @Body(new ValidationPipe()) sig: ResetPasswordDto,
-    @Res() res: Response,
-  ): Promise<any> {
-    return res.status(200).json({ dfds: 'dsfdsfds' });
-  }
 }

@@ -2,7 +2,12 @@ import { User } from '.prisma/client';
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, v1 as uuidv1 } from 'uuid';
 import { PrismaService } from '../common/prisma.service';
-import { SignUpDto, SignInDto } from './users.dto';
+import {
+  SignUpDto,
+  SignInDto,
+  PwdResetLinkDto,
+  ChangePasswordDto,
+} from './users.dto';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { TruUtil } from '../common/utils';
 
@@ -112,20 +117,164 @@ export class UsersService {
     });
 
     if (user != null) {
-      await this.prisma.user.update({
+      try {
+        await this.prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            status: 'ACTIVE',
+            confirmedAt: new Date(),
+          },
+        });
+        res.success = true;
+        res.message = 'Account Verified Successfully';
+        return res;
+      } catch (error) {
+        console.log(error);
+        throw new HttpException('Server Error', HttpStatus.BAD_REQUEST);
+      }
+    } else {
+      res.success = false;
+      res.message = 'Invalid Link';
+      return res;
+    }
+  }
+
+  async getPwdLink(PwdResetLinkDto: PwdResetLinkDto): Promise<any> {
+    const res: any = {};
+
+    try {
+      const user: any = await this.prisma.user.findFirst({
         where: {
-          id: user.id,
-        },
-        data: {
-          status: 'ACTIVE',
-          confirmedAt: new Date(),
+          email: PwdResetLinkDto['email'],
         },
       });
 
-      res.success = true;
-      res.message = 'Account Verified Successfully';
-    }
+      if (!user) {
+        res.success = false;
+        res.message = 'Email Not Found';
+        return res;
+      } else {
+        //TODO generate reset pwd link
+        //TODO send reset pwd link to mail
+        await this.prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            resetPasswordToken: uuidv4(),
+            resetPasswordSentAt: new Date(),
+          },
+        });
 
-    return res;
+        res.success = true;
+        res.message = 'Link Created';
+      }
+
+      return res;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Server Error', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async changePassword(ChangePasswordDto: ChangePasswordDto) {
+    const res: any = {};
+    try {
+      if (
+        ChangePasswordDto['password'] !== ChangePasswordDto['confirmPassword']
+      ) {
+        res.success = true;
+        res.message = 'Confirm password is not same as password';
+        return res;
+      }
+
+      const user: any = await this.prisma.user.findFirst({
+        where: {
+          resetPasswordToken: ChangePasswordDto['pwdResetToken'],
+        },
+      });
+
+      if (!user) {
+        res.success = false;
+        res.message = 'Invalid Link';
+        return res;
+      } else {
+        await this.prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            password: TruUtil.getHash(
+              TruUtil.decode(ChangePasswordDto['password']),
+            ),
+            resetPasswordSentAt: null,
+            resetPasswordToken: null,
+          },
+        });
+
+        res.success = true;
+        res.message = 'Password Changed Successfully';
+      }
+
+      return res;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Server Error', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async resetPassword(reqBody: any) {
+    const res: any = {};
+    try {
+      if (
+        TruUtil.dataBlankForAny(
+          reqBody['oldPassword'],
+          reqBody['newPassword'],
+          reqBody['confirmPassword'],
+        )
+      ) {
+        res.success = false;
+        res.message = 'Mandatory Fields are missing';
+        return res;
+      }
+      if (reqBody['newPassword'] !== reqBody['confirmPassword']) {
+        res.success = false;
+        res.message = 'Password and confirm passwords are not the same.';
+        return res;
+      }
+
+      const user = await this.prisma.user.findFirst({
+        where: {
+          email: reqBody.email,
+          password: TruUtil.getHash(TruUtil.decode(reqBody.oldPassword)),
+        },
+      });
+
+      if (user === undefined || user === null) {
+        res.success = false;
+        res.message = 'Old password is invalid';
+        return res;
+      } else {
+        await this.prisma.user.update({
+          where: {
+            id: user?.id,
+          },
+          data: {
+            password: TruUtil.getHash(TruUtil.decode(reqBody['newPassword'])),
+            resetPasswordToken: null,
+            resetPasswordSentAt: null,
+          },
+        });
+        res.success = true;
+        res.message = 'Password Reset Successfull';
+      }
+
+      return res;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException('Server Error', HttpStatus.BAD_REQUEST);
+    }
   }
 }

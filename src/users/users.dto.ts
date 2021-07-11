@@ -18,20 +18,6 @@ export class SignUpDto {
   readonly name: string;
 }
 
-export class ChangePasswordDto {
-  @IsString()
-  @IsNotEmpty()
-  oldPassword: string;
-
-  @IsString()
-  @IsNotEmpty()
-  password: string;
-
-  @IsString()
-  @IsNotEmpty()
-  confirmPassword: string;
-}
-
 export class SignInDto {
   @IsString()
   @IsNotEmpty()
@@ -42,12 +28,40 @@ export class SignInDto {
   readonly email: string;
 }
 
-export class ResetPasswordDto {
+export class PwdResetLinkDto {
+  @IsEmail()
+  @IsNotEmpty()
+  readonly email: string;
+}
+
+export class ChangePasswordDto {
   @IsString()
   @IsNotEmpty()
   readonly password: string;
 
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
-  readonly email: string;
+  readonly confirmPassword: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly pwdResetToken: string;
+}
+
+export class ResetPasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly appId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly oldPassword: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly newPassword: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly confirmPassword: string;
 }
