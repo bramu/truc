@@ -23,7 +23,7 @@ export class UsersService {
       },
     });
     if (null != tmp) {
-      return { message: 'Wrong Email' };
+      return { message: 'Email Already Exists. Please SignIn to continue.' };
     }
 
     const tmp1 = await this.prisma.account.findFirst({
@@ -32,7 +32,7 @@ export class UsersService {
       },
     });
     if (null != tmp1) {
-      return { message: 'Wrong account' };
+      return { message: 'User already exists with this account.' };
     }
 
     // create the user
@@ -41,26 +41,20 @@ export class UsersService {
         email: signupDto['email'],
         password: signupDto['password'],
         name: signupDto['name'],
+        uniqueId: uuidv4(),
+        accounts: {
+          create: {
+            account: {
+              create: {
+                name: signupDto['account'],
+                appId: uuidv4(),
+              },
+            },
+          },
+        },
       },
     });
 
-    // create the account
-    const account = await this.prisma.account.create({
-      data: {
-        name: signupDto['account'],
-        appId: '123',
-      },
-    });
-
-    // create in user account with the role as admin
-    await this.prisma.userAccount.create({
-      data: {
-        userId: user.id,
-        accountId: account.id,
-      },
-    });
-
-    // TODO finally send email to the user with trusender
-    return null;
+    return user;
   }
 }

@@ -4,9 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TeamsModule } from './teams/teams.module';
 import { UsersModule } from './users/users.module';
+import { AccountModule } from './account/account.module';
 
 @Module({
-  imports: [TeamsModule, UsersModule],
+  imports: [TeamsModule, UsersModule, AccountModule],
   controllers: [AppController],
   providers: [
     AppService,

@@ -12,6 +12,10 @@ export class SignUpDto {
   @IsString()
   @IsNotEmpty()
   readonly account: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly name: string;
 }
 
 export class ChangePasswordDto {
