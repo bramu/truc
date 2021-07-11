@@ -31,11 +31,11 @@ export class UsersController {
       return res.status(400).json(ret);
     }
 
-    // console.log(ret);
+    console.log(ret);
 
     // once the user creates successfully signin the user
 
-    return res.status(200).json({ dfds: 'dsfdsfds' });
+    return res.status(200).json({ ...ret });
   }
 
   @Post('change_password')
