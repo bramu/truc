@@ -13,8 +13,8 @@ generator client {
 
 model Account {
   id             Int      @id @default(autoincrement())
-  name           String @unique
-  appId          String @unique
+  name           String   @unique
+  appId          String   @unique
   identitySecret String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -23,52 +23,57 @@ model Account {
 }
 
 model User {
-  id                  Int      @id @default(autoincrement())
+  id                  Int        @id @default(autoincrement())
   uniqueId            String?
   name                String
-  email               String   @unique
+  email               String     @unique
   password            String
   resetPasswordToken  String?
   resetPasswordSentAt DateTime?
-  confirmationToken   String @default(uuid())
-  confirmationSentAt  DateTime @default(now())
-  confirmedAt         DateTime? 
+  confirmationToken   String     @default(uuid())
+  confirmationSentAt  DateTime   @default(now())
+  confirmedAt         DateTime?
   status              UserStatus @default(INACTIVE)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 
-  accounts UserAccount[]
+  accounts  UserAccount[]
   userToken UserToken?
 }
 
 model UserAccount {
-  id        Int      @id @default(autoincrement())
+  id        Int               @id @default(autoincrement())
   userId    Int
   accountId Int
-  account   Account? @relation(fields: [accountId], references: [id])
-  user      User?    @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  account   Account?          @relation(fields: [accountId], references: [id])
+  user      User?             @relation(fields: [userId], references: [id])
+  status    UserAccountStatus @default(CONFIRMATION_PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 }
 
-
 model UserToken {
-  id        Int      @id @default(autoincrement())
-  userId Int
-  user User @relation(fields: [userId], references: [id])
-  token String
-  ip String
-  os String
-  browser String
-  agent String
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+  token          String
+  ip             String
+  os             String
+  browser        String
+  agent          String
   lastAccessedOn DateTime
-  status String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum UserStatus {
   INACTIVE
   ACTIVE
   BLOCKED
+}
+
+enum UserAccountStatus {
+  CONFIRMATION_PENDING
+  CONFIRMED
 }
