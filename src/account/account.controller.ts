@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { SimpleAuthGuard } from '../users/simple-auth.guard';
-// import { TestAuthGuard } from '../users/test-auth.guard';
 import { AccountService } from './account.service';
 import { InvitationDto, DiscardInviteDto } from './account.dto';
 import { TruUtil } from '../common/utils';
@@ -27,9 +26,6 @@ export class AccountController {
     @Res() res: Response,
   ): Promise<any> {
     const teamInvite: any = await this.accountService.invite(invitationDto);
-
-    console.log(teamInvite);
-
     return res.status(200).json({ ...teamInvite });
   }
 
@@ -49,17 +45,12 @@ export class AccountController {
   @UseGuards(SimpleAuthGuard)
   @Get('team/invite-info')
   async inviteInfo(@Req() req: Request, @Res() res: Response): Promise<any> {
-    // TODO
-
     const viewInfo = await this.accountService.inviteInfo(req.query);
-
     return res.status(200).json({ ...viewInfo });
   }
 
   @Post('team/accept-invite')
   async acceptInvite(@Req() req: Request, @Res() res: Response): Promise<any> {
-    // TODO
-
     const authorization: any =
       req.headers.authorization || req.headers.Authorization;
 
@@ -85,14 +76,5 @@ export class AccountController {
     }
 
     return res.status(200).json({ ...viewInfo });
-  }
-
-  @Post('test-route')
-  async test(@Req() req: Request, @Res() res: Response): Promise<any> {
-    // TODO
-    return res.status(200).json({
-      name: 'Rohit',
-      age: 23,
-    });
   }
 }

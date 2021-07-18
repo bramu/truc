@@ -15,10 +15,6 @@ import { TruUtil } from '../common/utils';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(username: string): Promise<User | undefined> {
-    return null; //this.users.find(user => user.username === username);
-  }
-
   async signIn(signInDto: SignInDto): Promise<any> {
     console.log(signInDto);
 
@@ -69,12 +65,11 @@ export class UsersService {
     }
 
     // create the user
-
     try {
       const user: any = await this.prisma.user.create({
         data: {
           email: signupDto['email'],
-          password: TruUtil.getHash(TruUtil.decode(signupDto['password'])),
+          password: TruUtil.getHash(TruUtil.decode(signupDto.password)),
           name: signupDto['name'],
           uniqueId: TruUtil.generateRandomString(),
           accounts: {

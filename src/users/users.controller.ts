@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import {
-  SignInDto,
-  SignUpDto,
   ChangePasswordDto,
   PwdResetLinkDto,
+  SignInDto,
+  SignUpDto,
 } from './users.dto';
 import { UsersService } from './users.service';
 import { SimpleAuthGuard } from './simple-auth.guard';
@@ -119,6 +119,4 @@ export class UsersController {
       message: 'password reset successfully',
     });
   }
-
-  // all the get requests should go here
 }
