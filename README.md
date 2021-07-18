@@ -2,7 +2,7 @@
 
 ```bash
 # unit tests
-$ npm start --watch
+$ nest start --watch
 
 # to run all the migrations
 npx prisma migrate dev --name init

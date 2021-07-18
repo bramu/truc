@@ -38,6 +38,14 @@ export class UsersService {
       status: user.status,
     });
 
+    // insert the token in user token table
+    await this.prisma.userToken.create({
+      data: {
+        userId: user.id,
+        token: token,
+      },
+    });
+
     obj.message = 'Sign In Successfull';
     obj.data = user;
     obj.token = token;

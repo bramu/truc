@@ -12,12 +12,34 @@ import {
 import { Request, Response } from 'express';
 import { SimpleAuthGuard } from '../users/simple-auth.guard';
 import { AccountService } from './account.service';
-import { InvitationDto, DiscardInviteDto } from './account.dto';
+import {
+  InvitationDto,
+  DiscardInviteDto,
+  CreateAccountDto,
+} from './account.dto';
 import { TruUtil } from '../common/utils';
 
 @Controller('account')
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
+
+  @UseGuards(SimpleAuthGuard)
+  @Get('create')
+  async createAccount(
+    @Body(new ValidationPipe())
+    createAccountDto: CreateAccountDto,
+    @Res() res: Response,
+  ): Promise<any> {
+    // TODO here we need to update the JWT token with the account id
+    return res.status(200).json({ message: 'Successfully created account.' });
+  }
+
+  @UseGuards(SimpleAuthGuard)
+  @Get('switch')
+  async switchAccount(@Req() req: Request, @Res() res: Response): Promise<any> {
+    // TODO here we need to update the JWT token with the account id
+    return res.status(200).json({ message: 'Successfully switched account.' });
+  }
 
   @UseGuards(SimpleAuthGuard)
   @Post('team/invite')

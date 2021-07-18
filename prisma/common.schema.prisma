@@ -53,18 +53,18 @@ model UserAccount {
 }
 
 model UserToken {
-  id             Int      @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   userId         Int
-  user           User     @relation(fields: [userId], references: [id])
-  token          String
-  ip             String
-  os             String
-  browser        String
-  agent          String
-  lastAccessedOn DateTime
-  status         String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  user           User            @relation(fields: [userId], references: [id])
+  token          String          @db.Text
+  ip             String?
+  os             String?
+  browser        String?
+  agent          String?
+  lastAccessedOn DateTime        @default(now())
+  status         UserTokenStatus @default(ACTIVE)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 enum UserStatus {
@@ -76,5 +76,10 @@ enum UserStatus {
 enum UserAccountStatus {
   CONFIRMATION_PENDING
   CONFIRMED
+  INACTIVE
+}
+
+enum UserTokenStatus {
+  ACTIVE
   INACTIVE
 }

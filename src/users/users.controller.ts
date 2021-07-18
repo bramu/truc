@@ -22,7 +22,6 @@ import { SimpleAuthGuard } from './simple-auth.guard';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  // @UseGuards(SimpleAuthGuard)
   @Post('signin')
   async signIn(
     @Body(new ValidationPipe()) signInDto: SignInDto,

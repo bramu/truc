@@ -2,7 +2,6 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  Request,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -14,7 +13,6 @@ export class SimpleAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest();
-    req.body.userId = 123;
 
     const authorization =
       req.headers.authorization || req.headers.Authorization;
@@ -26,6 +24,8 @@ export class SimpleAuthGuard implements CanActivate {
     if (!TruUtil.letifyJwt(token)) {
       throw new UnauthorizedException();
     }
+
+    // TODO here we need to check the token is valid or not from user token table
 
     return true;
   }

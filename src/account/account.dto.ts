@@ -1,5 +1,10 @@
 import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
+export class CreateAccountDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly name: string;
+}
 export class InvitationDto {
   @IsArray()
   @IsNotEmpty()
