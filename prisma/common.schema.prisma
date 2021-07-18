@@ -27,7 +27,7 @@ model User {
   uniqueId            String?
   name                String
   email               String     @unique
-  password            String
+  password            String?
   resetPasswordToken  String?
   resetPasswordSentAt DateTime?
   confirmationToken   String     @default(uuid())
@@ -43,8 +43,8 @@ model User {
 
 model UserAccount {
   id        Int               @id @default(autoincrement())
-  userId    Int
-  accountId Int
+  userId    Int?
+  accountId Int?
   account   Account?          @relation(fields: [accountId], references: [id])
   user      User?             @relation(fields: [userId], references: [id])
   status    UserAccountStatus @default(CONFIRMATION_PENDING)
@@ -76,4 +76,5 @@ enum UserStatus {
 enum UserAccountStatus {
   CONFIRMATION_PENDING
   CONFIRMED
+  INACTIVE
 }
