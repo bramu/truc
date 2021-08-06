@@ -90,21 +90,21 @@ export class TruUtil {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require('randomstring').generate({
       length: 6,
-      charset: 'alphanumeric'
+      charset: 'alphanumeric',
     });
   };
   static getJwt = (data: any) => {
     return jwt.sign(
       {
-        data: data
+        data: data,
       },
       process.env.JWT_SECRET!,
-      { expiresIn: '30 days' }
+      { expiresIn: '30 days' },
     );
   };
   static letifyJwt = (
     token: string,
-    secret?: string
+    secret?: string,
   ): { success: boolean; data?: any; message?: string } => {
     if (!secret) secret = process.env.JWT_SECRET;
     try {
@@ -132,4 +132,8 @@ export class TruUtil {
     // Generate a v4 (random) id
     // return require('uuid').v4(); // -> '110ec58a-a0f2-4ac4-8393-c866d813b8d1'
   };
+  static uuidV1 = uuid.v1;
+  // static uuidV3 = uuid.v3;
+  static uuidV4 = uuid.v4;
+  // static uuidV5 = uuid.v5;
 }
