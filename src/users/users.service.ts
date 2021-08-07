@@ -1,4 +1,3 @@
-import { User } from '.prisma/client';
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4, v1 as uuidv1 } from 'uuid';
 import { PrismaService } from '../common/prisma.service';
