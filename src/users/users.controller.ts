@@ -17,7 +17,9 @@ import {
 } from './users.dto';
 import { UsersService } from './users.service';
 import { SimpleAuthGuard } from './simple-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}

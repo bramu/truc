@@ -9,11 +9,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   // https://docs.nestjs.com/openapi/introduction
+  // https://docs.nestjs.com/openapi/operations
   const config = new DocumentBuilder()
     .setTitle('Truc')
     .setDescription('The truc APIs description')
     .setVersion('1.0')
-    .addTag('truc')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('apis', app, document);

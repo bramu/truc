@@ -18,12 +18,15 @@ import {
   CreateAccountDto,
 } from './account.dto';
 import { TruUtil } from '../common/utils';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Account')
 @Controller('account')
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @UseGuards(SimpleAuthGuard)
+  @ApiBearerAuth()
   @Get('create')
   async createAccount(
     @Body(new ValidationPipe())
@@ -35,6 +38,7 @@ export class AccountController {
   }
 
   @UseGuards(SimpleAuthGuard)
+  @ApiBearerAuth()
   @Get('switch')
   async switchAccount(@Req() req: Request, @Res() res: Response): Promise<any> {
     // TODO here we need to update the JWT token with the account id
@@ -42,6 +46,7 @@ export class AccountController {
   }
 
   @UseGuards(SimpleAuthGuard)
+  @ApiBearerAuth()
   @Post('team/invite')
   async invite(
     @Body(new ValidationPipe()) invitationDto: InvitationDto,
@@ -65,6 +70,7 @@ export class AccountController {
   }
 
   @UseGuards(SimpleAuthGuard)
+  @ApiBearerAuth()
   @Get('team/invite-info')
   async inviteInfo(@Req() req: Request, @Res() res: Response): Promise<any> {
     const viewInfo = await this.accountService.inviteInfo(req.query);
