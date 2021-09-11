@@ -57,6 +57,7 @@ export class AccountController {
   }
 
   @UseGuards(SimpleAuthGuard)
+  @ApiBearerAuth()
   @Post('team/discard')
   async discard(
     @Body(new ValidationPipe()) discardInviteDto: DiscardInviteDto,

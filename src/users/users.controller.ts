@@ -17,7 +17,7 @@ import {
 } from './users.dto';
 import { UsersService } from './users.service';
 import { SimpleAuthGuard } from './simple-auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('User')
 @Controller('users')
@@ -103,6 +103,7 @@ export class UsersController {
   }
 
   @UseGuards(SimpleAuthGuard)
+  @ApiBearerAuth()
   @Post('reset-password')
   async resetPassword(
     @Req() req: Request,
