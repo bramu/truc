@@ -31,7 +31,7 @@ export class SignInDto {
 
   @IsEmail()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'bramu.ss@gmail.com' })
   readonly email: string;
 }
 
